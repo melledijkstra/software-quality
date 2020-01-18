@@ -1,5 +1,5 @@
 package hanze.nl.bussimulator;
 
-public enum Bedrijven {
+public enum Bedrijf {
     QBUZZ, ARRIVA, FLIXBUS
 }

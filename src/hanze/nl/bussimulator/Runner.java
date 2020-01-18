@@ -7,13 +7,12 @@ import java.util.Iterator;
 
 public class Runner {
 
-    private static HashMap<Integer, ArrayList<Bus>> busStart = new HashMap<Integer, ArrayList<Bus>>();
-    private static ArrayList<Bus> actieveBussen = new ArrayList<Bus>();
+    private static HashMap<Integer, ArrayList<Bus>> busStart = new HashMap<>();
+    private static ArrayList<Bus> actieveBussen = new ArrayList<>();
     private static int interval = 1000;
-    private static int syncInterval = 5;
 
     private static void addBus(int starttijd, Bus bus) {
-        ArrayList<Bus> bussen = new ArrayList<Bus>();
+        ArrayList<Bus> bussen = new ArrayList<>();
         if (busStart.containsKey(starttijd)) {
             bussen = busStart.get(starttijd);
         }
@@ -28,67 +27,54 @@ public class Runner {
         return (!busStart.isEmpty()) ? Collections.min(busStart.keySet()) : -1;
     }
 
-    public static void moveBussen(int nu) {
+    public static void moveBussen(int currentTime) {
         Iterator<Bus> itr = actieveBussen.iterator();
         while (itr.hasNext()) {
             Bus bus = itr.next();
             bus.move();
             if (bus.hasReachedLastStop()) {
-                bus.sendLastETA(nu);
+                bus.sendLastETA(currentTime);
                 itr.remove(); // bus has reached the end, remove from bus list
             }
         }
     }
 
-    public static void sendETAs(int nu) {
+    public static void sendETAs(int currentTime) {
         for (Bus bus : actieveBussen) {
-            bus.sendETAs(nu);
+            bus.sendETAs(currentTime);
         }
     }
 
     public static int initBussen() {
-        Bus bus1 = new Bus(Lijnen.LIJN1, Bedrijven.ARRIVA, 1);
-        Bus bus2 = new Bus(Lijnen.LIJN2, Bedrijven.ARRIVA, 1);
-        Bus bus3 = new Bus(Lijnen.LIJN3, Bedrijven.ARRIVA, 1);
-        Bus bus4 = new Bus(Lijnen.LIJN4, Bedrijven.ARRIVA, 1);
-        Bus bus5 = new Bus(Lijnen.LIJN5, Bedrijven.FLIXBUS, 1);
-        Bus bus6 = new Bus(Lijnen.LIJN6, Bedrijven.QBUZZ, 1);
-        Bus bus7 = new Bus(Lijnen.LIJN7, Bedrijven.QBUZZ, 1);
-        Bus bus8 = new Bus(Lijnen.LIJN1, Bedrijven.ARRIVA, 1);
-        Bus bus9 = new Bus(Lijnen.LIJN4, Bedrijven.ARRIVA, 1);
-        Bus bus10 = new Bus(Lijnen.LIJN5, Bedrijven.FLIXBUS, 1);
-        addBus(3, bus1);
-        addBus(5, bus2);
-        addBus(4, bus3);
-        addBus(6, bus4);
-        addBus(3, bus5);
-        addBus(5, bus6);
-        addBus(4, bus7);
-        addBus(6, bus8);
-        addBus(12, bus9);
-        addBus(10, bus10);
-        Bus bus11 = new Bus(Lijnen.LIJN1, Bedrijven.ARRIVA, -1);
-        Bus bus12 = new Bus(Lijnen.LIJN2, Bedrijven.ARRIVA, -1);
-        Bus bus13 = new Bus(Lijnen.LIJN3, Bedrijven.ARRIVA, -1);
-        Bus bus14 = new Bus(Lijnen.LIJN4, Bedrijven.ARRIVA, -1);
-        Bus bus15 = new Bus(Lijnen.LIJN5, Bedrijven.FLIXBUS, -1);
-        Bus bus16 = new Bus(Lijnen.LIJN6, Bedrijven.QBUZZ, -1);
-        Bus bus17 = new Bus(Lijnen.LIJN7, Bedrijven.QBUZZ, -1);
-        Bus bus18 = new Bus(Lijnen.LIJN1, Bedrijven.ARRIVA, -1);
-        Bus bus19 = new Bus(Lijnen.LIJN4, Bedrijven.ARRIVA, -1);
-        Bus bus20 = new Bus(Lijnen.LIJN5, Bedrijven.FLIXBUS, -1);
-        addBus(3, bus11);
-        addBus(5, bus12);
-        addBus(4, bus13);
-        addBus(6, bus14);
-        addBus(3, bus15);
-        addBus(5, bus16);
-        addBus(4, bus17);
-        addBus(6, bus18);
-        addBus(12, bus19);
-        addBus(10, bus20);
+        Lijn[] lijnen = new Lijn[]{
+                Lijn.LIJN1, Lijn.LIJN2, Lijn.LIJN3,
+                Lijn.LIJN4, Lijn.LIJN5, Lijn.LIJN6,
+                Lijn.LIJN7, Lijn.LIJN1, Lijn.LIJN4,
+                Lijn.LIJN5
+        };
+        Bedrijf[] bedrijven = new Bedrijf[]{
+                Bedrijf.ARRIVA, Bedrijf.ARRIVA, Bedrijf.ARRIVA,
+                Bedrijf.ARRIVA, Bedrijf.FLIXBUS, Bedrijf.QBUZZ,
+                Bedrijf.QBUZZ, Bedrijf.ARRIVA, Bedrijf.ARRIVA,
+                Bedrijf.FLIXBUS
+        };
+        int[] times = new int[] {
+                3, 3, 4, 4, 5,
+                5, 6, 6, 10, 12
+        };
+
+        // richting 1
+        for (int busID = 0; busID < lijnen.length; busID++) {
+            addBus(times[busID], new Bus(lijnen[busID], bedrijven[busID], 1));
+        }
+        // richting -1
+        for (int busID = 0; busID < lijnen.length; busID++) {
+            addBus(times[busID], new Bus(lijnen[busID], bedrijven[busID], -1));
+        }
+
         return Collections.min(busStart.keySet());
     }
+
 
     public static void main(String[] args) throws InterruptedException {
         int tijd = 0;
@@ -102,25 +88,5 @@ public class Runner {
             tijd++;
         }
     }
-
-	/* Om de tijdsynchronisatie te gebruiken moet de onderstaande main gebruikt worden
-	 * 
-	public static void main(String[] args) throws InterruptedException {
-		int tijd=0;
-		int counter=0;
-		TijdFuncties tijdFuncties = new TijdFuncties();
-		tijdFuncties.initSimulatorTijden(interval,syncInterval);
-		int volgende = initBussen();
-		while ((volgende>=0) || !actieveBussen.isEmpty()) {
-			counter=tijdFuncties.getCounter();
-			tijd=tijdFuncties.getTijdCounter();
-			System.out.println("De tijd is:" + tijdFuncties.getSimulatorWeergaveTijd());
-			volgende = (counter==volgende) ? startBussen(counter) : volgende;
-			moveBussen(tijd);
-			sendETAs(tijd);
-			tijdFuncties.simulatorStep();
-		}
-	}
-		 */
 
 }

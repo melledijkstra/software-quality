@@ -1,6 +1,6 @@
 package hanze.nl.bussimulator;
 
-public enum Lijnen {
+public enum Lijn {
 
     LIJN1(new Stop(Halte.A, 1), new Stop(Halte.B, 1), new Stop(Halte.C, 1),
             new Stop(Halte.D, 1), new Stop(Halte.E, 1), new Stop(Halte.F, 1), new Stop(Halte.G, 1)),
@@ -16,13 +16,11 @@ public enum Lijnen {
             new Stop(Halte.X, -1), new Stop(Halte.W, -1)),
     LIJN7(new Stop(Halte.A, 1), new Stop(Halte.R, -1), new Stop(Halte.Q, -1), new Stop(Halte.L, 1),
             new Stop(Halte.M, 1), new Stop(Halte.O, -1), new Stop(Halte.N, -1), new Stop(Halte.Z, -1),
-            new Stop(Halte.G, -1), new Stop(Halte.Y, -1), new Stop(Halte.X, -1), new Stop(Halte.W, -1)),
-    LIJN8(new Stop(Halte.M, -1), new Stop(Halte.P, 1), new Stop(Halte.J, 1), new Stop(Halte.F, -1),
-            new Stop(Halte.V, -1), new Stop(Halte.E, -1), new Stop(Halte.H, -1));
+            new Stop(Halte.G, -1), new Stop(Halte.Y, -1), new Stop(Halte.X, -1), new Stop(Halte.W, -1));
 
     private Stop[] haltes;
 
-    Lijnen(Stop... haltes) {
+    Lijn(Stop... haltes) {
         this.haltes = haltes;
     }
 

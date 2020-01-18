@@ -5,14 +5,14 @@ import hanze.nl.bussimulator.Halte.Positie;
 public class Bus {
 
     private String busID;
-    private Bedrijven bedrijf;
-    private Lijnen lijn;
+    private Bedrijf bedrijf;
+    private Lijn lijn;
     private int huidigeHalte;
     private int totVolgendeHalte;
     private int richting;
     private boolean bijHalte;
 
-    Bus(Lijnen lijn, Bedrijven bedrijf, int richting) {
+    Bus(Lijn lijn, Bedrijf bedrijf, int richting) {
         this.lijn = lijn;
         this.bedrijf = bedrijf;
         this.richting = richting;
