@@ -8,43 +8,72 @@ import javax.jms.*;
 
 public class ArrivaLogger {
 
-    public static void main(String[] args) {
+    private String queueName = "ARRIVALOGGER";
+    private Connection connection;
+    private Session session;
+    private MessageConsumer consumer;
 
+    public void setupConnection() throws JMSException {
+        ActiveMQConnectionFactory connectionFactory =
+                new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
+        connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Destination destination = session.createQueue(queueName);
+        this.consumer = session.createConsumer(destination);
+    }
+
+    public ArrivaLogger() {
         try {
-            ActiveMQConnectionFactory connectionFactory =
-                    new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
-            Connection connection = connectionFactory.createConnection();
-            connection.start();
-            Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination destination = session.createQueue("ARRIVALOGGER");
-            MessageConsumer consumer = session.createConsumer(destination);
-            boolean newMessage = true;
-            int aantalBerichten = 0;
-            int aantalETAs = 0;
-            while (newMessage) {
-                Message message = consumer.receive(2000);
-                newMessage = false;
-                if (message instanceof TextMessage) {
-                    TextMessage textMessage = (TextMessage) message;
-                    String text = textMessage.getText();
-                    newMessage = true;
-                    XStream xstream = new XStream();
-                    xstream.alias("Bericht", Bericht.class);
-                    xstream.alias("ETA", ETA.class);
-                    Bericht bericht = (Bericht) xstream.fromXML(text);
-                    aantalBerichten++;
-                    aantalETAs += bericht.ETAs.size();
-                } else {
-                    System.out.println("Received: " + message);
-                }
-            }
-            consumer.close();
-            session.close();
-            connection.close();
-            System.out.println(aantalBerichten + " berichten met " + aantalETAs + " ETAs verwerkt.");
-        } catch (Exception e) {
-            System.out.println("Caught: " + e);
+            setupConnection();
+        } catch (JMSException e) {
+            System.out.println("Something went wrong setting up connection: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        ArrivaLogger logger = new ArrivaLogger();
+        try {
+            logger.processMessages();
+        } catch (JMSException e) {
+            System.out.println("Something went wrong during processing messages: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void processMessages() throws JMSException {
+        boolean newMessage = true;
+        int aantalBerichten = 0, aantalETAs = 0;
+        while (newMessage) {
+            Message message = this.consumer.receive(2000);
+            newMessage = false;
+            if (message instanceof TextMessage) {
+                TextMessage textMessage = (TextMessage) message;
+                newMessage = true;
+                Bericht bericht = convertMessage(textMessage);
+                aantalBerichten++;
+                aantalETAs += bericht.ETAs.size();
+            } else {
+                System.out.println("Received: " + message);
+            }
+        }
+        this.closeConnection();
+        System.out.println(aantalBerichten + " berichten met " + aantalETAs + " ETAs verwerkt.");
+    }
+
+    private Bericht convertMessage(TextMessage textMessage) throws JMSException {
+        String text = textMessage.getText();
+        XStream xstream = new XStream();
+        xstream.alias("Bericht", Bericht.class);
+        xstream.alias("ETA", ETA.class);
+        return (Bericht) xstream.fromXML(text);
+    }
+
+
+    private void closeConnection() throws JMSException {
+        consumer.close();
+        session.close();
+        connection.close();
     }
 }

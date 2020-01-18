@@ -23,9 +23,7 @@ public class Runner {
     }
 
     private static int startBussen(int tijd) {
-        for (Bus bus : busStart.get(tijd)) {
-            actieveBussen.add(bus);
-        }
+        actieveBussen.addAll(busStart.get(tijd));
         busStart.remove(tijd);
         return (!busStart.isEmpty()) ? Collections.min(busStart.keySet()) : -1;
     }
@@ -34,18 +32,16 @@ public class Runner {
         Iterator<Bus> itr = actieveBussen.iterator();
         while (itr.hasNext()) {
             Bus bus = itr.next();
-            boolean eindpuntBereikt = bus.move();
-            if (eindpuntBereikt) {
+            bus.move();
+            if (bus.hasReachedLastStop()) {
                 bus.sendLastETA(nu);
-                itr.remove();
+                itr.remove(); // bus has reached the end, remove from bus list
             }
         }
     }
 
     public static void sendETAs(int nu) {
-        Iterator<Bus> itr = actieveBussen.iterator();
-        while (itr.hasNext()) {
-            Bus bus = itr.next();
+        for (Bus bus : actieveBussen) {
             bus.sendETAs(nu);
         }
     }

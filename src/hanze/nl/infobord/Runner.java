@@ -9,7 +9,6 @@ public class Runner {
     }
 
     public static void main(String[] args) throws Exception {
-        //TODO vul hier de juiste selector in.
-        thread(new ListenerStarter("SELECTOR INVULLEN"), false);
+        thread(new ListenerStarter("HALTE = 'B' AND RICHTING = 1"), false);
     }
 }
