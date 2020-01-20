@@ -4,6 +4,8 @@ import hanze.nl.bussimulator.Halte.Positie;
 
 public class Bus {
 
+    public final int GEEN_HALTE = -1;
+
     private String busID;
     private Bedrijf bedrijf;
     private Lijn lijn;
@@ -16,7 +18,7 @@ public class Bus {
         this.lijn = lijn;
         this.bedrijf = bedrijf;
         this.richting = richting;
-        this.huidigeHalte = -1;
+        this.huidigeHalte = GEEN_HALTE;
         this.totVolgendeHalte = 0;
         this.bijHalte = false;
         this.busID = "Niet gestart";
@@ -51,7 +53,7 @@ public class Bus {
 
     public void move() {
         bijHalte = false;
-        if (huidigeHalte == -1) {
+        if (huidigeHalte == GEEN_HALTE) {
             start();
             naarVolgendeHalte();
         } else {
