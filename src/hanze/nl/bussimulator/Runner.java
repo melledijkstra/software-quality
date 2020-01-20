@@ -58,7 +58,7 @@ public class Runner {
                 Bedrijf.QBUZZ, Bedrijf.ARRIVA, Bedrijf.ARRIVA,
                 Bedrijf.FLIXBUS
         };
-        int[] times = new int[] {
+        int[] times = new int[]{
                 3, 3, 4, 4, 5,
                 5, 6, 6, 10, 12
         };

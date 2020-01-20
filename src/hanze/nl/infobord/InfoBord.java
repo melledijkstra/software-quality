@@ -23,25 +23,6 @@ public class InfoBord {
         setupLayout();
     }
 
-    public void setupLayout() {
-        this.scherm = new JFrame("InfoBord");
-        JPanel panel = new JPanel();
-        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
-        panel.setLayout(boxlayout);
-        panel.setBorder(new EmptyBorder(new Insets(10, 20, 10, 20)));
-        JLabel tijdregel1 = new JLabel("Scherm voor de laatste keer bijgewerkt op:");
-        JLabel tijdregel2 = new JLabel("00:00:00");
-        panel.add(tijdregel1);
-        panel.add(tijdregel2);
-        for (int i = 0; i < 4; i++) {
-            lineLabels[i] = new JLabel(String.format("-regel%d-", i + 1));
-            panel.add(lineLabels[i]);
-        }
-        scherm.add(panel);
-        scherm.pack();
-        scherm.setVisible(true);
-    }
-
     public static InfoBord getInfoBord() {
         if (infobord == null) {
             infobord = new InfoBord();
@@ -65,6 +46,25 @@ public class InfoBord {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setupLayout() {
+        this.scherm = new JFrame("InfoBord");
+        JPanel panel = new JPanel();
+        BoxLayout boxlayout = new BoxLayout(panel, BoxLayout.Y_AXIS);
+        panel.setLayout(boxlayout);
+        panel.setBorder(new EmptyBorder(new Insets(10, 20, 10, 20)));
+        JLabel tijdregel1 = new JLabel("Scherm voor de laatste keer bijgewerkt op:");
+        JLabel tijdregel2 = new JLabel("00:00:00");
+        panel.add(tijdregel1);
+        panel.add(tijdregel2);
+        for (int i = 0; i < 4; i++) {
+            lineLabels[i] = new JLabel(String.format("-regel%d-", i + 1));
+            panel.add(lineLabels[i]);
+        }
+        scherm.add(panel);
+        scherm.pack();
+        scherm.setVisible(true);
     }
 
     public void setRegels() {

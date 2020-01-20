@@ -13,16 +13,6 @@ public class ArrivaLogger {
     private Session session;
     private MessageConsumer consumer;
 
-    public void setupConnection() throws JMSException {
-        ActiveMQConnectionFactory connectionFactory =
-                new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
-        connection = connectionFactory.createConnection();
-        connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        Destination destination = session.createQueue(queueName);
-        this.consumer = session.createConsumer(destination);
-    }
-
     public ArrivaLogger() {
         try {
             setupConnection();
@@ -40,6 +30,16 @@ public class ArrivaLogger {
             System.out.println("Something went wrong during processing messages: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void setupConnection() throws JMSException {
+        ActiveMQConnectionFactory connectionFactory =
+                new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_BROKER_URL);
+        connection = connectionFactory.createConnection();
+        connection.start();
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        Destination destination = session.createQueue(queueName);
+        this.consumer = session.createConsumer(destination);
     }
 
     public void processMessages() throws JMSException {

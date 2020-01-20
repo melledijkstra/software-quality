@@ -5,7 +5,6 @@ import com.thoughtworks.xstream.XStream;
 import java.io.IOException;
 
 public class TijdFuncties {
-    private Tijd startTijd;
     private Tijd simulatorTijd;
     private Tijd verschil;
     private int interval;
@@ -14,7 +13,7 @@ public class TijdFuncties {
 
     public void initSimulatorTijden(int interval, int syncInterval) {
         simulatorTijd = new Tijd(0, 0, 0);
-        startTijd = getCentralTime();
+        Tijd startTijd = retrieveCentralTime();
         verschil = berekenVerschil(startTijd, simulatorTijd);
         this.interval = interval;
         this.syncCounter = syncInterval;
@@ -65,7 +64,7 @@ public class TijdFuncties {
     }
 
     private void synchroniseTijd() {
-        Tijd huidigeTijd = getCentralTime();
+        Tijd huidigeTijd = retrieveCentralTime();
         System.out.println("De werkelijke tijd is nu: " + huidigeTijd.toString());
         Tijd verwachtteSimulatorTijd = simulatorTijd.copyTijd();
         verwachtteSimulatorTijd.increment(verschil);
@@ -73,7 +72,7 @@ public class TijdFuncties {
         verschil.increment(delay);
     }
 
-    private Tijd getCentralTime() {
+    private Tijd retrieveCentralTime() {
         try {
             HTTPFuncties httpFuncties = new HTTPFuncties();
             String result = httpFuncties.executeGet("xml");
